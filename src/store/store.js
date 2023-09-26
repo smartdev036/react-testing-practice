@@ -18,8 +18,10 @@ export const setupStore = ({ httpApi }) => {
 
   middlewares.push(
     reduxThunk.withExtraArgument({
-      // TODO something is missing here
-      httpApi: httpApi,
+      httpApi: {
+        ...httpApi,
+        getFirst5MatchingContacts: debounce(httpApi.getFirst5MatchingContacts, 300),        
+      },
       dataCache: new DataCache(),
     }),
   );

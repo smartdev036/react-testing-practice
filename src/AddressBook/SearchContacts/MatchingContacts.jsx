@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 
@@ -12,7 +12,7 @@ const MatchingContacts = (
     downshiftGetItemProps,
   },
 ) => {
-  // TODO something is missing here
+  if(data.length === 0 ) return null;
 
   return (
     <ul
@@ -24,11 +24,10 @@ const MatchingContacts = (
           {...downshiftGetItemProps({
             key: item.id,
             item: item,
-            // TODO something is wrong here
             className: classNames(
               "MatchingContacts_item",
               {
-                "MatchingContacts_item_highlighted": false,
+                "MatchingContacts_item_highlighted": (index === highlightedIndex),
               }),
           })}
         >

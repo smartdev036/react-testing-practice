@@ -12,20 +12,35 @@ export const updateSearchPhrase = newPhrase =>
           id: contact.id,
           value: contact.name,
         }));
-        // TODO something is wrong here
+
         dispatch(
-          searchActions.updateSearchPhraseSuccess({ matchingContacts: [] }),
+          searchActions.updateSearchPhraseSuccess({ matchingContacts: matchingContacts }),
         );
       })
       .catch(() => {
-        // TODO something is missing here
+        dispatch(
+          searchActions.updateSearchPhraseFailure()
+        );
       });
   };
 
 export const selectMatchingContact = selectedMatchingContact =>
   (dispatch, getState, { httpApi, dataCache }) => {
 
-    // TODO something is missing here
+    let contactDetails = dataCache.load({
+      key: selectedMatchingContact.id,
+    });
+    console.log('contactDteails from Cache: ', contactDetails)
+    if( selectedMatchingContact.id === contactDetails?.id) {
+      dispatch(
+        searchActions.selectMatchingContact({ selectedMatchingContact }),
+      );
+      dispatch(
+        contactDetailsActions.fetchContactDetailsSuccess({contactDetails}),
+      );
+      return;
+    }
+
     const getContactDetails = ({ id }) => {
       return httpApi
           .getContact({ contactId: selectedMatchingContact.id })
@@ -47,13 +62,12 @@ export const selectMatchingContact = selectedMatchingContact =>
 
     getContactDetails({ id: selectedMatchingContact.id })
       .then((contactDetails) => {
-        // TODO something is missing here
         dataCache.store({
           key: contactDetails.id,
+          value: contactDetails
         });
-        // TODO something is wrong here
         dispatch(
-          contactDetailsActions.fetchContactDetailsFailure(),
+          contactDetailsActions.fetchContactDetailsSuccess({contactDetails}),
         );
       })
       .catch(() => {
